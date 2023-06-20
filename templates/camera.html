@@ -1,0 +1,105 @@
+<html>
+<head><meta charset="utf-8" />
+    <title>Banition - Webcam</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+    <!-- <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='site.css') }}" /> -->
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="{{ url_for('static', filename='lib/animate/animate.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='lib/owlcarousel/assets/owl.carousel.min.css') }}" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">   
+</head>
+<body>
+    <div class="row g-2">
+        <div class="col-lg-6 col-md-6">
+            <div class="justify-content-center">
+                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                    <button class="btn btn-primary py-3 px-5 mt-2" id="send">Take Photo</button>
+                    <video width="640" height="480" class="float-left" id="video" autoplay></video>                    
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-6">
+            <div class="justify-content-center">
+                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                    <a class="btn btn-primary py-3 px-5 mt-2" href="{{ url_for('predict_camera') }}">Identification</a>            
+                    <canvas id="canvas" width="640" height="480" style="background-color: grey"></canvas>                    
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='lib/wow/wow.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/easing/easing.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/waypoints/waypoints.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='lib/owlcarousel/owl.carousel.min.js') }}"></script>
+
+    <!-- Template Javascript -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+    <script>
+
+    // Elements for taking the snapshot
+    var video = document.getElementById('video');
+    var canvas = document.getElementById('canvas');
+    var context = canvas.getContext('2d');
+
+    // Get access to the camera!
+    if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        // Not adding `{ audio: true }` since we only want video now
+        navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
+            //video.src = window.URL.createObjectURL(stream);
+            video.srcObject = stream;
+            video.play();
+        });
+    }
+
+    // Trigger photo take
+    document.getElementById("send").addEventListener("click", function() {
+        context.drawImage(video, 0, 0, 640, 480); // copy frame from <video>
+        canvas.toBlob(upload, "image/jpeg");  // convert to file and execute function `upload`
+    });
+
+    function upload(file) {
+        // create form and append file
+        var formdata =  new FormData();
+        formdata.append("snap", file);
+        
+        // create AJAX requests POST with file
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "{{ url_for('upload') }}", true);
+        xhr.onload = function() {
+            if(this.status = 200) {
+                console.log(this.response);
+            } else {
+                console.error(xhr);
+            }
+            alert(this.response);
+        };
+        xhr.send(formdata);
+    }
+
+    </script>
+</body>
+</html>

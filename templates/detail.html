@@ -1,0 +1,36 @@
+{% extends 'layout.html' %}
+{% block title %}
+Banition - Detail
+{% endblock %}
+{% block icon %}
+"fa fa-info-circle me-3"
+{% endblock %}
+{% block page %}
+Halaman Detail 
+{% endblock %}
+{% block navbar_active %}
+active
+{% endblock %}
+{% block content %}
+<div class="container-xxl py-5">
+    <div class="row g-5">
+        <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.1s" style="min-height: 400px;">
+            <div class="position-relative h-100">
+                <div class="owl-carousel header-carousel position-relative">
+                    {% for img in images %}
+                    <div class="owl-carousel-item position-relative" style="display: flex; justify-content: center;">
+                        <img class="img-fluid w-75 h-75" src="{{ url_for('static', filename='batik-images/' + detail.nama + '/' + img) }}" alt="" style="object-fit: cover;">
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 wow fadeInUp" data-wow-delay="0.3s">
+            <h1 class="mb-4">Batik {{ detail.nama }}</h1>
+            <p class="mb-4">{{ detail.deskripsi }}</p>
+            <p class="mb-4"><i class="fa fa-arrow-right text-primary me-2"></i>Source: <a href={{ detail.source }} target="_blank">{{ detail.source }}</a></p>
+            <a class="btn btn-primary py-3 px-5 mt-2" href="javascript:history.back()">Back</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

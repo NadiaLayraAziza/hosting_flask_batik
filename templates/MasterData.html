@@ -1,0 +1,51 @@
+{% extends 'layout.html' %}
+{% block title %}
+Banition - Master Data
+{% endblock %}
+{% block icon %}
+"fa fa-list-ul me-3"
+{% endblock %}
+{% block page %}
+Halaman Master Data 
+{% endblock %}
+{% block navbar_active %}
+active
+{% endblock %}
+{% block content %}
+<div class="container-xxl py-4">
+    <div class="text-left wow fadeInUp" data-wow-delay="0.1s">
+        <div style="display: flex; align-items: center;">
+        <h1 class="float-left mb-1" style="width: 100%">Data Batik</h1>
+        <div class="input-group justify-content-end">
+            <div class="form-outline">
+                <input type="text" id="filter" class="form-control" placeholder="Search"/>
+            </div>
+            <button type="button" class="btn btn-primary">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+        </div>
+        <hr style="height:2px;border-width:0;color:gray;background-color:#06BBCC">
+    </div>
+    <div class="row g-4">
+        <div class="col-lg-12 col-md-12 wow fadeInUp" data-wow-delay="0.1s">
+            {% for item in data %}
+            <div class="d-flex align-items-center mb-3" id="results">
+                <img src="{{ url_for('static', filename = item.gambar) }}" style="width: 80px; height: 80px;">
+                <div class="ms-3">
+                    <h5 class="text-primary">Batik {{item.nama}}</h5>
+                    <p class="mb-0">{{item.desk_singkat}}</p>
+                    <p class="mb-0"><a href="/MasterData/{{item.id}}" style="color: #52565b"><b>Read more...</b></a></p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center">
+            <h6>Source Image:</h6>
+            <a href="https://github.com/agusekominarno/Batik" target="_blank">https://github.com/agusekominarno/Batik</a><br>
+            <a href="https://scholar.google.co.id/scholar?hl=id&as_sdt=0%2C5&q=Minarno%2C+A.+E.+et+al.+%282018%29.+Comparison+of+Classification+Method+for+Batik+Classification+Using+Multi+Texton+Histogram.+TELKOMNIKA+%28Telecommunication+Computing+Electronics+and+Control%29%2C+16.&btnG=" target="_blank">Minarno, A. E. et al. (2018). Comparison of Classification Method for Batik Classification Using Multi Texton Histogram. TELKOMNIKA (Telecommunication Computing Electronics and Control), 16</a>
+            <a href="https://scholar.google.co.id/scholar?hl=id&as_sdt=0%2C5&q=Minarno%2C+A.+E.%2C+Munarko%2C+Y.%2C+Kurniawardhani%2C+A.%2C+%26+Bimantoro%2C+F.+%282016%2C+January%29.+Classification+of+Texture+Using+Multi+Texton+Histogram+and+Probabilistic+Neural+Network.+In+IOP+Conference+Series%3A+Materials+Science+and+Engineering+%28Vol.+105%2C+No.+1%2C+p.+012022%29.+IOP+Publishing.&btnG=" target="_blank">Minarno, A. E., Munarko, Y., Kurniawardhani, A., & Bimantoro, F. (2016, January). Classification of Texture Using Multi Texton Histogram and Probabilistic Neural Network. In IOP Conference Series: Materials Science and Engineering (Vol. 105, No. 1, p. 012022). IOP Publishing.</a><br>
+        </div>
+    </div>
+</div>
+{% endblock %}

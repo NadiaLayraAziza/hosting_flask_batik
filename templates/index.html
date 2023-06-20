@@ -1,0 +1,81 @@
+{% extends 'layout.html' %}
+{% block title %}
+Banition - Home
+{% endblock %}
+{% block icon %}
+"fa fa-home me-3"
+{% endblock %}
+{% block page %}
+Halaman Home 
+{% endblock %}
+{% block navbar_active %}
+active
+{% endblock %}
+{% block content %}
+<!-- Identification Start -->
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h6 class="section-title bg-white text-center text-primary px-3"></h6>
+            <h1 class="mb-5">Add a Image for Identification!</h1>
+        </div>
+        <div class="row g-4 justify-content-center">
+            <div class="col-lg-6 col-md-6 wow fadeInUp" data-wow-delay="0.3s">
+
+                <!-- Upload image input-->
+                <form action="{{ url_for('predict_image_file') }}" enctype="multipart/form-data" method="POST">
+                    
+                        <div class="d-flex border-top">
+                            <table border="1" cellpadding="5" width="350px">
+                                <tr class="text-center">
+                                    <td><b>Upload File</b></td>
+                                </tr>
+                                <tr>
+                                    <td><input class="form-control" id="upload" name="file" type="file"></td>
+                                </tr>
+                            </table>
+                            <table border="1" cellpadding="5" width="350px">
+                                <tr class="text-center">
+                                    <td><b>Use Camera</b></td>
+                                </tr>
+                                <tr style="display: flex; justify-content: center; align-items: center;">
+                                    <td><a class="btn btn-sm-square btn-primary mx-1" href="{{ url_for('camera') }}" style="width: 37px; height: 37px;"><i class="fa fa-camera"></i></a></td>
+                                </tr>
+                            </table>
+                        </div> 
+
+                    <!-- Uploaded image area-->
+                    <div class="image-area mt-2">
+                        <img alt="" class="img-fluid rounded shadow-sm mx-auto d-block" id="imageResult" name="imageResult" src="">                        
+                    </div>
+                    
+                    <!-- Submit button-->
+                    <div class="container">
+                        <div class="row">
+                            <div class="col text-center">
+                                <input class="btn btn-primary my-3" type="submit"/>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Identification End -->
+
+<!-- About Start -->
+<div class="container-xxl py-2 wow fadeInUp" data-wow-delay="0.1s">
+    <div class="container">
+        <div class="text-center">
+            <h6 class="section-title bg-white text-center text-primary px-3"></h6>
+            <h1 class="mb-5">About This System</h1>
+        </div>
+        <div class="text-center">
+            <p class="mb-4">sistem identifikasi motif batik secara otomatis berupa website dengan metode ekstraksi fitur GLCM dan Moment Invariant menggunakan SVM untuk klasifikasi citra motif batik. Sistem ini akan melakukan klasifikasi untuk mengidentifikasi motif batik setelah pengguna input citra batik pada sistem dengan cara upload gambar maupun menggunakan camera. Hasil yang diberikan oleh sistem berupa nama motif batik dan deskripsi singkat terkait motif batik tersebut.</p>
+            <p class="mb-4">Selain itu, pada sistem juga disediakan master data motif batik agar pengguna dapat mengetahui informasi suatu motif batik tanpa proses identifikasi citra batik. Secara tidak langsung, sistem ini membantu untuk pengenalan motif batik yang beragam jenisnya serta melestariakan kebudayaan Indonesia yang telah diakui oleh UNESCO.</p>
+        </div>
+    </div>
+</div>
+<!-- About End -->
+{% endblock %}
