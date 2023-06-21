@@ -1,6 +1,6 @@
 from flask import Flask, request
 from flask import render_template, url_for
-from flask_mysqldb import MySQL
+from sqlalchemy import create_engine, text
 from PIL import Image
 import MySQLdb.cursors
 import os
@@ -14,12 +14,9 @@ sc = pickle.load(open('sc_SVM_GLCM.sav', 'rb'))
 
 app = Flask(__name__)
 
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = ''
-app.config['MYSQL_DB'] = 'batik'
- 
-mysql = MySQL(app)
+db_url = "mysql://root:nadia123@localhost/batik"
+engine = create_engine(db_url, pool_size=5, pool_recycle=3600)
+conn = engine.connect()
 
 upload_folder = os.path.join('static', 'uploads')
 app.config['UPLOAD'] = upload_folder
@@ -30,7 +27,6 @@ def home():
     
 @app.route('/prediction', methods=['POST'])
 def predict_image_file():
-    # dir = 'uploads'
     for f in os.listdir(app.config['UPLOAD']):
         os.remove(os.path.join(app.config['UPLOAD'], f))
     f = request.files['file']
@@ -43,18 +39,14 @@ def predict_image_file():
     image = Image.open(file_path)
     image.thumbnail((128, 128))
     image.save("static/uploads/upload_resized.jpg")
-    # new_image = image.resize((128, 128))
-    # new_image.save("static/uploads/upload_resized.jpg")
-    # cv2.resize(file_path, (128, 128))
     img = cv2.imread("static/uploads/upload_resized.jpg")
     fitur_glcm = ekstraksi_glcm(img)
     df_transformed = sc.transform(fitur_glcm)
     pred = model.predict(df_transformed)[0]
-    # predictions = pred.tostring()
-    cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor) 
-    cur.execute("""SELECT * FROM master_data WHERE nama = %s""", (pred,))
-    detail = cur.fetchone()
-    # return namafile
+    values = {'nama': pred}
+    sql_text = text("""SELECT * FROM master_data WHERE nama = :nama""")
+    result = conn.execute(sql_text, values)
+    detail = result.fetchone()
     return render_template("ResultUpload.html", namafile=namafile, predictions=pred, detail=detail)
     
 
@@ -75,7 +67,6 @@ def upload():
             fs.save(file_path)
             print('FileStorage:', fs)
             print('filename:', fs.filename)
-            # fs.save('image.jpg')
             return 'Capture Success!'
         else:
             return 'Capture Failed!'
@@ -95,30 +86,27 @@ def predict_camera():
     fitur_glcm = ekstraksi_glcm(img)
     df_transformed = sc.transform(fitur_glcm)
     pred = model.predict(df_transformed)[0]
-    # predictions = pred.tostring()
-    cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor) 
-    cur.execute("""SELECT * FROM master_data WHERE nama = %s""", (pred,))
-    detail = cur.fetchone()
+    
+    values = {'nama': pred}
+    sql_text = text("""SELECT * FROM master_data WHERE nama = :nama""")
+    result = conn.execute(sql_text, values)
+    detail = result.fetchone()
     return render_template("ResultWebcam.html", predictions=pred, detail=detail)
 
 @app.route("/MasterData")
 def MasterData():
-    #creating variable for connection
-    cursor=mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    #executing query
-    cursor.execute("select * from master_data")
-    #fetching all records from database
-    data=cursor.fetchall()
-    #returning back to projectlist.html with all records from MySQL
-    
+    sql_text = text("select * from master_data")
+    result = conn.execute(sql_text)
+    data = result.fetchall()
     return render_template("MasterData.html", active="MasterData", data=data)
 
 @app.route("/MasterData/<id>", methods=["GET"])
 def show(id):
-    cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor) 
-    cur.execute("""SELECT * FROM master_data WHERE id = %s""", (id,))
-    detail = cur.fetchone()
-    images = os.listdir(os.path.join(app.static_folder, "batik-images/" + detail['nama']))
+    values = {'id': id}
+    sql_text = text("""SELECT * FROM master_data WHERE id = :id""")
+    result = conn.execute(sql_text, values)
+    detail = result.fetchone()
+    images = os.listdir(os.path.join(app.static_folder, "batik-images/" + detail[1]))
     return render_template("detail.html", active="detail", detail=detail, images=images)
 
 if __name__ == "__main__":
