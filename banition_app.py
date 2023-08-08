@@ -14,7 +14,7 @@ sc = pickle.load(open('sc_SVM_GLCM.sav', 'rb'))
 
 app = Flask(__name__)
 
-db_url = "mysql://root:nadia123@localhost/batik"
+db_url = "mysql://root:@localhost/batik"
 engine = create_engine(db_url, pool_size=5, pool_recycle=3600)
 conn = engine.connect()
 

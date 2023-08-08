@@ -135,7 +135,6 @@ def ekstraksi_glcm(image_input):
 
     # ----------------- calculate greycomatrix() & greycoprops() for angle 0, 45, 90, 135 ----------------------------------
     def calc_glcm_all_agls(img, props, dists=[1], agls=[0, np.pi/4, np.pi/2, 3*np.pi/4], lvl=256, sym=True, norm=True):
-    # def calc_glcm_all_agls(img, label, desc, props, dists=[1], agls=[0], lvl=256, sym=True, norm=True):
         
         glcm = graycomatrix(img, 
                             distances=dists, 
@@ -148,9 +147,7 @@ def ekstraksi_glcm(image_input):
         glcm_props = [propery for name in props for propery in graycoprops(glcm, name)[0]]
         for item in glcm_props:
                 feature.append(item)
-        # for ent in entropy:
-        #         feature.append(ent) 
-        
+                
         return feature
 
 
@@ -164,12 +161,10 @@ def ekstraksi_glcm(image_input):
     
     columns = []
     angles = ['0', '45', '90', '135']
-    # angles = ['0']
     for name in properties :
         for ang in angles:
             columns.append(name + "_" + ang)
 
     glcm_df_old = pd.DataFrame(glcm_all_agls, columns = columns)
-    # glcm_df.head()
     glcm_df = pd.concat([df_ent_new, glcm_df_old], axis=1, join='inner')
     return glcm_df
